@@ -22,6 +22,8 @@ for line in content[8:]:
         graph.append(edge)
         edge_set.add(edge_pair)
 
+head[1] = len(edge_set)
+
 file.close()
 
 # output file
