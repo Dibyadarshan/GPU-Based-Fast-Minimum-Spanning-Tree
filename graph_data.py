@@ -16,7 +16,12 @@ for line in content[8:]:
     line = line.replace('a ', '')
     edge = [int(s) for s in line.split() if s.isdigit()]
     edge_pair = edge[0:2]
+    # edge_pair[0] -= 1
+    # edge_pair[1] -= 1
+    # edge[0] -= 1
+    # edge[1] -= 1
     edge_pair.sort()
+    print(edge_pair)
     edge_pair = tuple(edge_pair)
     if edge_pair not in edge_set:
         graph.append(edge)
