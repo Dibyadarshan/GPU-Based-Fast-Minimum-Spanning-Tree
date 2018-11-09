@@ -38,6 +38,7 @@ int main(){
         while(1){
             int node1 = rand() % nodes;
             int node2 = rand() % nodes;
+            if(node1 == node2) continue;
             if(present_edge.find(make_pair(min(node1, node2), max(node1, node2))) == present_edge.end()){
                 adjacency[node1].push_back(make_pair(node2, weight));
                 adjacency[node2].push_back(make_pair(node1, weight));
