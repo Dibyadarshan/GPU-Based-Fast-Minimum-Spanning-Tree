@@ -3,6 +3,7 @@
 #include <cuda.h>
 #include <thrust/device_vector.h>
 #include <thrust/extrema.h>
+#include <thrust/device_free.h>
 #include <ctime>
 using namespace std;
 
@@ -83,7 +84,7 @@ int main(){
         }
 
         int min_index = thrust::min_element(ptr, ptr + nodes) - ptr;
-        cout<<"Min Weight Index: "<<min_index<<endl;
+        // cout<<"Min Weight Index: "<<min_index<<endl;
         
         parent[min_index] = current;
         ans += device_weights[min_index];
@@ -95,12 +96,18 @@ int main(){
 
     cout<<"Answer: "<<ans<<endl;
 
-    for(int i = 0; i < nodes; ++i) {
-        cout<<i<<"'s parent is "<<parent[i]<<endl;
-    }
+    // for(int i = 0; i < nodes; ++i) {
+    //     cout<<i<<"'s parent is "<<parent[i]<<endl;
+    // }
 
     double elapsed_time = double(end - begin) / CLOCKS_PER_SEC;
     cout<<"Execution time: "<<elapsed_time<<endl;
+
+    // thrust::device_free(ptr); 	
+    // device_weights.clear();
+    // thrust::device_vector<int>().swap(device_weights);
+    free(V); free(E); free(W);
+    free(parent); free(weights); free(inMST); 
 
     return 0;
 }

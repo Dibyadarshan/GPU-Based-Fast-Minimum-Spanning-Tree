@@ -9,6 +9,7 @@
 #include <iostream>
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/prim_minimum_spanning_tree.hpp>
+#include <ctime>
 
 
 int
@@ -40,9 +41,9 @@ for(int i = 0; i < edge_count; ++i){
     edges[i] = E(node1, node2);
     // std::cout<<edges[i].first<<" "<<edges[i].second<<" "<<weights[i]<<"<-\n";
 }
-for(int i = 0; i < edge_count; ++i){
-    std::cout<<edges[i].first<<" "<<edges[i].second<<" "<<weights[i]<<"<-\n";
-}
+// for(int i = 0; i < edge_count; ++i){
+//     std::cout<<edges[i].first<<" "<<edges[i].second<<" "<<weights[i]<<"<-\n";
+// }
 /*
 5
 7
@@ -55,6 +56,9 @@ for(int i = 0; i < edge_count; ++i){
 4 0 1
 */
 /*------------------------------------------------------------------------*/
+
+clock_t begin = clock();
+
 #if defined(BOOST_MSVC) && BOOST_MSVC <= 1300
   Graph g(num_nodes);
   property_map<Graph, edge_weight_t>::type weightmap = get(edge_weight, g); 
@@ -80,11 +84,15 @@ for(int i = 0; i < edge_count; ++i){
   prim_minimum_spanning_tree(g, &p[0]);
 #endif
 
-  for (std::size_t i = 0; i != p.size(); ++i)
-    if (p[i] != i)
-      std::cout << "parent[" << i << "] = " << p[i] << std::endl;
-    else
-      std::cout << "parent[" << i << "] = no parent" << std::endl;
+  // for (std::size_t i = 0; i != p.size(); ++i)
+  //   if (p[i] != i)
+  //     std::cout << "parent[" << i << "] = " << p[i] << std::endl;
+  //   else
+  //     std::cout << "parent[" << i << "] = no parent" << std::endl;
+
+  clock_t end = clock();
+  double elapsed_time = double(end - begin) / CLOCKS_PER_SEC;
+  std::cout<<"Execution time: "<<elapsed_time<<"\n";
 
   return EXIT_SUCCESS;
 }
