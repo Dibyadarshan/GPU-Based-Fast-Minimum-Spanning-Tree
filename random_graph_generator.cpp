@@ -6,38 +6,49 @@ using namespace std;
 int main(){
 
     srand(time(NULL));
+
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL);
+    cout.tie(NULL);
     
-    int nodes;
+    // nodes<=10^5
+
+    long long int nodes;
     cin>>nodes;
 
-    vector<vector<pair<int,int> > > adjacency(nodes);
+    vector<vector<pair<long long int, long long int> > > adjacency(nodes);
 
-    int extra_edges = ((nodes - 1) * nodes)/2 - (nodes-1);
+    long long int extra_edges = ((nodes - 1) * nodes)/2 - (nodes-1);
     extra_edges = rand() % (extra_edges + 1);
 
-    vector<int> graph(nodes);
+    if(nodes - 1 + extra_edges > 100000){
+        long long int difference = 100000 - (nodes - 1);
+        extra_edges = rand() % (difference + 1);
+    }
+
+    vector<long long int> graph(nodes);
     
-    for(int i = 0; i < nodes; ++i){
+    for(long long int i = 0; i < nodes; ++i){
         graph[i] = i;
     }   
 
     random_shuffle(graph.begin(),graph.end());
 
-    set<pair<int,int> > present_edge;
+    set<pair<long long int, long long int> > present_edge;
 
-    for(int i = 1; i < nodes; ++i){
-        int add = random() % i;
-        int weight = random() % INF;
+    for(long long int i = 1; i < nodes; ++i){
+        long long int add = random() % i;
+        long long int weight = random() % INF;
         adjacency[graph[i]].push_back(make_pair(graph[add], weight));
         adjacency[graph[add]].push_back(make_pair(graph[i], weight));
         present_edge.insert(make_pair(min(graph[add], graph[i]), max(graph[add], graph[i])));
     }
 
-    for(int i = 1; i <= extra_edges; ++i){
-        int weight = rand() % INF;
+    for(long long int i = 1; i <= extra_edges; ++i){
+        long long int weight = rand() % INF;
         while(1){
-            int node1 = rand() % nodes;
-            int node2 = rand() % nodes;
+            long long int node1 = rand() % nodes;
+            long long int node2 = rand() % nodes;
             if(node1 == node2) continue;
             if(present_edge.find(make_pair(min(node1, node2), max(node1, node2))) == present_edge.end()){
                 adjacency[node1].push_back(make_pair(node2, weight));
@@ -50,8 +61,8 @@ int main(){
 
     cout<<nodes<<" "<<nodes-1+extra_edges<<"\n";
 
-    for(int i = 0; i < nodes; ++i){
-        for(int j = 0; j < adjacency[i].size(); ++j){
+    for(long long int i = 0; i < nodes; ++i){
+        for(long long int j = 0; j < adjacency[i].size(); ++j){
             if(i < adjacency[i][j].first){
                 cout<<i<<" "<<adjacency[i][j].first<<" "<<adjacency[i][j].second<<"\n";
             }

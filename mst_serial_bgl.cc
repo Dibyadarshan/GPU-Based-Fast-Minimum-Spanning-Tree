@@ -40,9 +40,9 @@ for(int i = 0; i < edge_count; ++i){
     edges[i] = E(node1, node2);
     // std::cout<<edges[i].first<<" "<<edges[i].second<<" "<<weights[i]<<"<-\n";
 }
-for(int i = 0; i < edge_count; ++i){
-    std::cout<<edges[i].first<<" "<<edges[i].second<<" "<<weights[i]<<"<-\n";
-}
+// for(int i = 0; i < edge_count; ++i){
+//     std::cout<<edges[i].first<<" "<<edges[i].second<<" "<<weights[i]<<"<-\n";
+// }
 /*
 5
 7
