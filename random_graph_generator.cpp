@@ -1,6 +1,7 @@
 #include <bits/stdc++.h>
-#define INF 100
-#define MAX_NODES 1000000
+#define MAX_EDGE_WEIGHT 100
+#define MAX_NODES 100000000
+#define MIN_EDGE_WEIGHT 10
 
 using namespace std;
 
@@ -39,14 +40,14 @@ int main(){
 
     for(long long int i = 1; i < nodes; ++i){
         long long int add = random() % i;
-        long long int weight = random() % INF;
+        long long int weight = random() % MAX_EDGE_WEIGHT + MIN_EDGE_WEIGHT;
         adjacency[graph[i]].push_back(make_pair(graph[add], weight));
         adjacency[graph[add]].push_back(make_pair(graph[i], weight));
         present_edge.insert(make_pair(min(graph[add], graph[i]), max(graph[add], graph[i])));
     }
 
     for(long long int i = 1; i <= extra_edges; ++i){
-        long long int weight = rand() % INF;
+        long long int weight = rand() % MAX_EDGE_WEIGHT + MIN_EDGE_WEIGHT;
         while(1){
             long long int node1 = rand() % nodes;
             long long int node2 = rand() % nodes;

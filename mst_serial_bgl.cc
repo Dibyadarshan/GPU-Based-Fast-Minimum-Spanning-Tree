@@ -89,11 +89,11 @@ clock_t begin = clock();
 #endif
   clock_t end = clock();
 
-for (std::size_t i = 0; i != p.size(); ++i)
-    if (p[i] != i)
-      std::cout << "parent[" << i << "] = " << p[i] << std::endl;
-    else
-      std::cout << "parent[" << i << "] = no parent" << std::endl;
+// for (std::size_t i = 0; i != p.size(); ++i)
+//     if (p[i] != i)
+//       std::cout << "parent[" << i << "] = " << p[i] << std::endl;
+//     else
+//       std::cout << "parent[" << i << "] = no parent" << std::endl;
 
   double elapsed_time = double(end - begin) / CLOCKS_PER_SEC;
   std::cout<<"Execution time: "<<elapsed_time<<"\n";

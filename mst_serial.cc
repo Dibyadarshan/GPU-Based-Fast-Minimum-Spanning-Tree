@@ -31,6 +31,7 @@ long long prim(int x)
         if(marked[x] == true)
             continue;
         minimumCost += p.first;
+
         marked[x] = true;
         for(int i = 0;i < adj[x].size();++i)
         {
@@ -64,9 +65,9 @@ int main()
 
     clock_t end = clock();
 
-    for(long long int i = 0; i < nodes; ++i){
-        cout<<i<<"-"<<parent[i]<<"\n";
-    }
+    // for(long long int i = 0; i < nodes; ++i){
+    //     cout<<i<<"-"<<parent[i]<<"\n";
+    // }
 
     cout << "Answer : " << minimumCost << endl;
     double elapsed_time = double(end - begin) / CLOCKS_PER_SEC;

@@ -7,6 +7,19 @@
 #include <ctime>
 using namespace std;
 
+__global__ void weightUpdate(int *d_V, int *d_E, int *d_W, int *d_C, int * d_parent, int *d_weights, int *d_inMST) {
+    int id = threadIdx.x + blockIdx.x * blockDim.x;
+    if(id >= (d_V[d_C+1] - d_V[d_C]))
+        return;
+    int index = d_V[d_C] + id;
+    int incoming_vertex = d_E[index];
+    int edge_weight = d_W[d_V[index];
+    if (d_weights[incoming_vertex] > edge_weight) {
+        d_weights[incoming_vertex] = edge_weight;
+        d_parent[incoming_vertex] = d_C;
+    }
+}
+ 
 int main(){
 
     //freopen("graph.txt", "r", stdin);
@@ -14,8 +27,7 @@ int main(){
     int nodes, edges;
     cin>>nodes>>edges;
 
-    vector<vector<pair<int,int> > > adjacency_list(nodes); 
-    
+    vector<vector<pair<int,int> > > adjacency_list(nodes);     
     for(int i = 0; i < edges; ++i){
         int node1, node2, weight;
         cin>>node1>>node2>>weight;
@@ -24,7 +36,7 @@ int main(){
         adjacency_list[node2].push_back(make_pair(node1, weight));
     }
 
-    int * V = new int[nodes];
+    int * V = new int[nodes+1];
     int * E = new int[2 * edges];
     int * W = new int[2 * edges];
 
@@ -39,6 +51,15 @@ int main(){
         }
         cumulative_sum += limit;
     }
+    V[nodes] = 2*edges;
+    
+    int *d_V, *d_E, *d_W;
+    cudaMalloc((void **)&d_V, (nodes+1) * sizeof(int));
+    cudaMalloc((void **)&d_E, 2 * edges * sizeof(int));
+    cudaMalloc((void **)&d_W, 2 * edges * sizeof(bool));
+    cudaMemcpy(d_V, V, nodes * sizeof(int),  cudaMemcpyHostToDevice);
+    cudaMemcpy(d_E, E, 2 * edges * sizeof(int),  cudaMemcpyHostToDevice);
+    cudaMemcpy(d_W, W, 2 * edges * sizeof(int),  cudaMemcpyHostToDevice);
 
     // for(int i = 0; i < nodes; i++)
     // {
@@ -55,7 +76,7 @@ int main(){
     int count = 0;
 
     int *parent = new int[nodes];
-    vector<int> weights(nodes);
+    int *weights = new int[nodes];
     bool *inMST = new bool[nodes];
 
     parent[0] = -1;
@@ -64,75 +85,59 @@ int main(){
         inMST[i] = false;
     }
 
-    
+    int *d_parent, *d_weights, *d_inMST;
+    cudaMalloc((void **)&d_parent, nodes * sizeof(int));
+    cudaMalloc((void **)&d_weights, nodes * sizeof(int));
+    cudaMalloc((void **)&d_inMST, nodes * sizeof(bool));
 
-    thrust::device_vector<int> device_weights(weights.begin(), weights.end());
+    
+    cudaMemcpy(d_parent, parent, nodes * sizeof(int),  cudaMemcpyHostToDevice);
+    cudaMemcpy(d_weights, weights, nodes * sizeof(int),  cudaMemcpyHostToDevice);
+    cudaMemcpy(d_inMST, inMST, nodes * sizeof(bool),  cudaMemcpyHostToDevice);
+
+    int C = 0;
+    int *d_C;
+    cudaMemcpy(d_C, &C, sizeof(int), cudaMemcpyHostToDevice);
+
+    thrust::device_vector<int> device_weights(weights, weights + nodes);
     thrust::device_ptr<int> ptr = device_weights.data();
 
     clock_t begin = clock();
-
+    // while all nodes are added to MST
     while(count < nodes-1){
         ++count;
         inMST[current] = true;
 
-        // int len = adjacency_list[current].size();
-        // for(int i = 0; i < len; ++i) {
-        //     int incoming_vertex = adjacency_list[current][i].first;
-        //     if(!inMST[incoming_vertex]) {
-        //         if(device_weights[incoming_vertex] > adjacency_list[current][i].second) {
-        //             device_weights[incoming_vertex] = adjacency_list[current][i].second;
-        //             parent[incoming_vertex] = current;
-        //         }
-        //     }
-        // }
 
-        int len = adjacency_list[current].size();
-        for(int i = 0; i < len; ++i) {
-            int incoming_vertex = adjacency_list[current][i].first;
-            if(!inMST[incoming_vertex]) {
-                if(weights[incoming_vertex] > adjacency_list[current][i].second) {
-                    weights[incoming_vertex] = adjacency_list[current][i].second;
-                    parent[incoming_vertex] = current;
-                }
-            }
-        }
-
-        device_weights = weights;
-
-        //int min_index = 0;
+        // Find the mininum index
         int min_index = thrust::min_element(ptr, ptr + nodes) - ptr;
         // cout<<"Min Weight Index: "<<min_index<<endl;
         
+        // update         
         parent[min_index] = current;
-        ans += weights[min_index];
-        weights[min_index] = INT_MAX;
+        ans += device_weights[min_index];
+        device_weights[min_index] = INT_MAX;
         current = min_index;
-
-        
     }
-    
     clock_t end = clock();
 
-    // for(int i = 0; i < nodes; ++i) {
-    //     cout<<i<<"'s parent is "<<parent[i]<<endl;
-    // }
-
+    // print the parent
+    for(int i = 0; i < nodes; ++i) {
+        cout<<i<<"'s parent is "<<parent[i]<<endl;
+    }
+    // sum of all weights
     cout<<"Answer: "<<ans<<endl;
 
+    // print the time
     double elapsed_time = double(end - begin) / CLOCKS_PER_SEC;
     cout<<"Execution time: "<<elapsed_time<<endl;
 
-    // thrust::device_free(ptr); 	
-    // device_weights.clear();
-    // thrust::device_vector<int>().swap(device_weights);
+    // free all memory
     free(V); free(E); free(W);
-    free(parent); free(inMST); 
+    free(parent); free(weights); free(inMST); 
 
     return 0;
 }
-
-
-
 
 /*
 9 14
