@@ -1,5 +1,6 @@
 #include <bits/stdc++.h>
 #define INF 100
+#define MAX_NODES 1000000
 
 using namespace std;
 
@@ -11,7 +12,7 @@ int main(){
     cin.tie(NULL);
     cout.tie(NULL);
     
-    // nodes<=10^5
+    // nodes<=MAX_NODES
 
     long long int nodes;
     cin>>nodes;
@@ -21,8 +22,8 @@ int main(){
     long long int extra_edges = ((nodes - 1) * nodes)/2 - (nodes-1);
     extra_edges = rand() % (extra_edges + 1);
 
-    if(nodes - 1 + extra_edges > 100000){
-        long long int difference = 100000 - (nodes - 1);
+    if(nodes - 1 + extra_edges > MAX_NODES){
+        long long int difference = MAX_NODES - (nodes - 1);
         extra_edges = rand() % (difference + 1);
     }
 

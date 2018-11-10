@@ -9,15 +9,24 @@
 #include <iostream>
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/prim_minimum_spanning_tree.hpp>
+#include <ctime>
 
+using namespace boost;
+  typedef adjacency_list < vecS, vecS, undirectedS,
+    property<vertex_distance_t, int>, property < edge_weight_t, int > > Graph;
+  typedef std::pair < int, int >E;
+
+int weights[1000000];
+E graph_edges[1000000];
 
 int
 main()
 {
+
+  clock_t begin = clock();
+
   using namespace boost;
-  typedef adjacency_list < vecS, vecS, undirectedS,
-    property<vertex_distance_t, int>, property < edge_weight_t, int > > Graph;
-  typedef std::pair < int, int >E;
+
 /*------------------------------------------------------------------------*/
 //   const int num_nodes = 5;
 //   E edges[] = { E(0, 2), E(1, 3), E(1, 4), E(2, 1), E(2, 3),
@@ -31,13 +40,11 @@ std::cin>>num_nodes;
 std::cin>>edge_count;
 // int * weights = new int[edge_count+5];
 // E * edges = new E[edge_count+5];
-int weights[100000];
-E edges[100000];
 for(int i = 0; i < edge_count; ++i){
     int node1, node2, weight;
     std::cin>>node1>>node2>>weight;
     weights[i] = weight;
-    edges[i] = E(node1, node2);
+    graph_edges[i] = E(node1, node2);
     // std::cout<<edges[i].first<<" "<<edges[i].second<<" "<<weights[i]<<"<-\n";
 }
 // for(int i = 0; i < edge_count; ++i){
@@ -64,7 +71,7 @@ for(int i = 0; i < edge_count; ++i){
     weightmap[e] = weights[j];
   }
 #else
-  Graph g(edges, edges + sizeof(edges) / sizeof(E), weights, num_nodes);
+  Graph g(graph_edges, graph_edges + sizeof(graph_edges) / sizeof(E), weights, num_nodes);
   property_map<Graph, edge_weight_t>::type weightmap = get(edge_weight, g);
 #endif
   std::vector < graph_traits < Graph >::vertex_descriptor >
@@ -85,6 +92,11 @@ for(int i = 0; i < edge_count; ++i){
       std::cout << "parent[" << i << "] = " << p[i] << std::endl;
     else
       std::cout << "parent[" << i << "] = no parent" << std::endl;
+
+  clock_t end = clock();
+
+  double elapsed_time = double(end - begin) / CLOCKS_PER_SEC;
+  std::cout<<"Execution time: "<<elapsed_time<<"\n";
 
   return EXIT_SUCCESS;
 }
