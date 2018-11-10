@@ -9,15 +9,21 @@
 #include <iostream>
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/prim_minimum_spanning_tree.hpp>
+#include <ctime>
 
+using namespace boost;
+  typedef adjacency_list < vecS, vecS, undirectedS,
+    property<vertex_distance_t, int>, property < edge_weight_t, int > > Graph;
+  typedef std::pair < int, int >E;
 
 int
 main()
 {
+
+  
+
   using namespace boost;
-  typedef adjacency_list < vecS, vecS, undirectedS,
-    property<vertex_distance_t, int>, property < edge_weight_t, int > > Graph;
-  typedef std::pair < int, int >E;
+
 /*------------------------------------------------------------------------*/
 //   const int num_nodes = 5;
 //   E edges[] = { E(0, 2), E(1, 3), E(1, 4), E(2, 1), E(2, 3),
@@ -29,10 +35,8 @@ main()
 int num_nodes, edge_count;
 std::cin>>num_nodes;
 std::cin>>edge_count;
-// int * weights = new int[edge_count+5];
-// E * edges = new E[edge_count+5];
-int weights[100000];
-E edges[100000];
+int * weights = new int[edge_count];
+E * edges = new E[edge_count];
 for(int i = 0; i < edge_count; ++i){
     int node1, node2, weight;
     std::cin>>node1>>node2>>weight;
@@ -55,21 +59,25 @@ for(int i = 0; i < edge_count; ++i){
 4 0 1
 */
 /*------------------------------------------------------------------------*/
+
+
+
 #if defined(BOOST_MSVC) && BOOST_MSVC <= 1300
   Graph g(num_nodes);
   property_map<Graph, edge_weight_t>::type weightmap = get(edge_weight, g); 
-  for (std::size_t j = 0; j < sizeof(edges) / sizeof(E); ++j) {
+  for (std::size_t j = 0; j < edge_count; ++j) {
     graph_traits<Graph>::edge_descriptor e; bool inserted;
     boost::tie(e, inserted) = add_edge(edges[j].first, edges[j].second, g);
     weightmap[e] = weights[j];
   }
 #else
-  Graph g(edges, edges + sizeof(edges) / sizeof(E), weights, num_nodes);
+  Graph g(edges, edges + edge_count, weights, num_nodes);
   property_map<Graph, edge_weight_t>::type weightmap = get(edge_weight, g);
 #endif
   std::vector < graph_traits < Graph >::vertex_descriptor >
     p(num_vertices(g));
-
+    
+clock_t begin = clock();
 #if defined(BOOST_MSVC) && BOOST_MSVC <= 1300
   property_map<Graph, vertex_distance_t>::type distance = get(vertex_distance, g);
   property_map<Graph, vertex_index_t>::type indexmap = get(vertex_index, g);
@@ -79,12 +87,16 @@ for(int i = 0; i < edge_count; ++i){
 #else
   prim_minimum_spanning_tree(g, &p[0]);
 #endif
+  clock_t end = clock();
 
-  for (std::size_t i = 0; i != p.size(); ++i)
+for (std::size_t i = 0; i != p.size(); ++i)
     if (p[i] != i)
       std::cout << "parent[" << i << "] = " << p[i] << std::endl;
     else
       std::cout << "parent[" << i << "] = no parent" << std::endl;
+
+  double elapsed_time = double(end - begin) / CLOCKS_PER_SEC;
+  std::cout<<"Execution time: "<<elapsed_time<<"\n";
 
   return EXIT_SUCCESS;
 }

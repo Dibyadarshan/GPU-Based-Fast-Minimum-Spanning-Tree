@@ -9,7 +9,7 @@ using namespace std;
 
 int main(){
 
-    freopen("graph.txt", "r", stdin);
+    //freopen("graph.txt", "r", stdin);
 
     int nodes, edges;
     cin>>nodes>>edges;
@@ -64,10 +64,12 @@ int main(){
         inMST[i] = false;
     }
 
-    clock_t begin = clock();
+    
 
     thrust::device_vector<int> device_weights(weights, weights + nodes);
     thrust::device_ptr<int> ptr = device_weights.data();
+
+    clock_t begin = clock();
 
     while(count < nodes-1){
         ++count;
@@ -94,11 +96,11 @@ int main(){
     
     clock_t end = clock();
 
-    cout<<"Answer: "<<ans<<endl;
+    for(int i = 0; i < nodes; ++i) {
+        cout<<i<<"'s parent is "<<parent[i]<<endl;
+    }
 
-    // for(int i = 0; i < nodes; ++i) {
-    //     cout<<i<<"'s parent is "<<parent[i]<<endl;
-    // }
+    cout<<"Answer: "<<ans<<endl;
 
     double elapsed_time = double(end - begin) / CLOCKS_PER_SEC;
     cout<<"Execution time: "<<elapsed_time<<endl;
