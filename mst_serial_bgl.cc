@@ -19,9 +19,6 @@ using namespace boost;
 int
 main()
 {
-
-  
-
   using namespace boost;
 
 /*------------------------------------------------------------------------*/
