@@ -1,8 +1,34 @@
 # GPU Based Fast Minimum Spanning Tree
 
-## Results
-
 ## Usage
+1. Random Connected Graph Generation
+    ```
+    $ g++ random_graph_generator.cpp -o graph
+    $ ./graph > graph2p14
+    16384
+    ```
+
+2. MST Serial
+    ```
+    $ g++ mst_serial.cpp -o serial
+    $ ./serial < graph2p14
+    ```
+
+3. MST Serial BGL
+    ```
+    $ g++ mst_serial_bg;.cpp -o bgl
+    $ ./bgl < graph2p14
+    ```
+
+4. Parallel CUDA code
+    ```
+    $ nvcc mst.cu -o mst
+    $ ./mst < graph2p14
+    ```
+
+## Results
+<img src="results/result00.png" width="400px">
+<img src="results/result01.png" width="400px">
 
 ## Files
 - `mst.cu` - CUDA code for parallel implementation of Prim's algorithm for MST
